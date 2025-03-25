@@ -2,8 +2,8 @@ import { AnySelectMenuInteraction, ButtonInteraction, ClientEvents, ComponentTyp
 import chalk from "chalk";
 
 import { client } from "./client.js";
-import Game from "mods/Game.js";
-import Vanilla from "mods/Vanilla.js";
+import Game from "./../../mods/Game.js";
+import { ModsDatabase } from "./../../databases/Databases.js";
 
 interface Event {
     Name: string,
@@ -56,13 +56,17 @@ export default function defineEvent(Event: Event) {
         if (client) client.on(Event["Event"], async (...args: any[]) => {
             let Run = true;
 
+            let Mod: Game = (await import('./../../mods/Vanilla.js')).default;
+
             if (Event["Event"] === "interactionCreate") {
                 const interaction = args[0] as (ButtonInteraction | AnySelectMenuInteraction);
 
-                if (!interaction.replied) if (interaction.type === 3) Run = await InteractionUserCheck(interaction);                
+                if (!interaction.replied) if (interaction.type === 3) Run = await InteractionUserCheck(interaction);
+
+                if (await ModsDatabase.Get(interaction.user.id)) Mod = (await import(`./../../mods/${await ModsDatabase.Get(interaction.user.id)}.js`)).default;
             }
 
-            if (Run) await Event.Execute(Vanilla.Resources.Utilities, Vanilla.Resources.Data, ...args);
+            if (Run) await Event.Execute(Mod.Resources.Utilities, Mod.Resources.Data, ...args);
         });
     }
 }

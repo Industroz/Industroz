@@ -2,7 +2,7 @@ import { InteractionReplyOptions, InteractionUpdateOptions } from "discord.js";
 
 import defineCommand from "../resources/Bot/commands.js";
 
-import DataBase from "../databases/Database.js";
+import { SettingsDatabase } from "./../databases/Databases.js";
 
 export interface _Settings {
     Visibility: "Public" | "Private" | string,
@@ -30,11 +30,7 @@ export const Settings: Array<Setting> = [
         Emoji: '🪪',
         Type: "Custom"
     }
-]
-
-
-export const SettingsDatabase: DataBase<_Settings> = new DataBase('Settings');
-await SettingsDatabase.Init();
+];
 
 defineCommand({
     Name: 'settings',

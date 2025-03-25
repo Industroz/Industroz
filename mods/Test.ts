@@ -22,12 +22,12 @@ interface NavigationButtonData {
 };
 type InteractionResponse = InteractionReplyOptions & InteractionUpdateOptions;
 
-const Vanilla: Game = {
+const Test: Game = {
     Configuration: {
-        Name: 'Vanilla',
-        Description: 'Vanilla Industroz is the official Mod by the creator of Industroz, Platformer444 with the original features of the Game that is regularly updated and maintained.',
+        Name: 'Test',
+        Description: 'Test',
         Version: '1.0.0-beta',
-        Logo: '🍦',
+        Logo: '⚙️',
         Author: { Username: 'platformer444', UserID: '1150357997491593247'}
     },
     Resources: {
@@ -184,7 +184,7 @@ const Vanilla: Game = {
                     Description: 'A Shiny, Golden and Circular In-Game Currency for Industroz.',
                     Emoji: '🪙',
                     Usable: async (interaction, Data) => {
-                        await interaction.reply(await Vanilla.Resources.Utilities.PaySalary(Data));
+                        await interaction.reply(await Test.Resources.Utilities.PaySalary(Data));
                     }
                 },
                 {
@@ -199,8 +199,7 @@ const Vanilla: Game = {
                         { Item: 1, Quantity: 2 }
                     ],
                     Usable: async (interaction, Data) => {
-                        const Reply = await Vanilla.Resources.Utilities.DestroyTile(Data, interaction.user, "Axe");
-
+                        const Reply = await Test.Resources.Utilities.DestroyTile(Data, interaction.user, "Axe");
                         if (Reply[0] === "Reply") await interaction.reply(Reply[1]);
                         else if (Reply[0] === "Update") await interaction.update(Reply[1]);
                     }
@@ -211,8 +210,7 @@ const Vanilla: Game = {
                     Description: 'A Hard Piece of Metal attached to a Wooden Stick used to Destroy Stone-Like Materials.',
                     Emoji: '⛏️',
                     Usable: async (interaction, Data) => {
-                        const Reply = await Vanilla.Resources.Utilities.DestroyTile(Data, interaction.user, "Pickaxe");
-
+                        const Reply = await Test.Resources.Utilities.DestroyTile(Data, interaction.user, "Pickaxe");
                         if (Reply[0] === "Reply") await interaction.reply(Reply[1]);
                         else if (Reply[0] === "Update") await interaction.update(Reply[1]);
                     }
@@ -243,8 +241,8 @@ const Vanilla: Game = {
                     const __Biomes: number[] = [];
         
                     for (let j = 1; j <= WorldDimensions[1] / BiomeWidth; j++) {
-                        for (const Biome of Vanilla.Resources.Data.Biomes) {
-                            if (Vanilla.Resources.Utilities.RandomNumber(1, Vanilla.Resources.Utilities.RandomNumber(10, 20) - Biome["SpawningChance"]) === 1) {
+                        for (const Biome of Test.Resources.Data.Biomes) {
+                            if (Test.Resources.Utilities.RandomNumber(1, Test.Resources.Utilities.RandomNumber(10, 20) - Biome["SpawningChance"]) === 1) {
                                 __Biomes.push(Biome["ID"]);
                                 break;
                             }
@@ -263,15 +261,15 @@ const Vanilla: Game = {
                     for (let j = 0; j < WorldDimensions[1]; j++) {
                         let Tile: number | undefined;
         
-                        const Biome = Vanilla.Resources.Data.Biomes.filter((Biome) => {
+                        const Biome = Test.Resources.Data.Biomes.filter((Biome) => {
                             return Biome["ID"] === _Biomes[Math.floor(i / BiomeHeight)][Math.floor(j / BiomeWidth)];
                         })[0] ?? { Tiles: [ 2 ] };
         
                         for (let _Tile of Biome["Tiles"]) {
-                            const __Tile = Vanilla.Resources.Data.Tiles.filter((__Tile) => { return __Tile["ID"] === _Tile })[0];
+                            const __Tile = Test.Resources.Data.Tiles.filter((__Tile) => { return __Tile["ID"] === _Tile })[0];
         
                             if (__Tile["Spawnable"]) {
-                                if (Vanilla.Resources.Utilities.RandomNumber(1, (10 - __Tile["Spawnable"])) === 1) {
+                                if (Test.Resources.Utilities.RandomNumber(1, (10 - __Tile["Spawnable"])) === 1) {
                                     Tile = _Tile;
                                     break;
                                 }
@@ -297,8 +295,8 @@ const Vanilla: Game = {
                     for (let j = Position[1] - Math.floor(FOV[1] / 2); j < (Position[1] - Math.floor(FOV[1] / 2)) + FOV[1]; j++) {
                         let Tile;
         
-                        if (!World[i] || !World[i][j]) Tile = Vanilla.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === 1 })[0];
-                        else Tile = Vanilla.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === World[i][j]["Tile"] })[0];
+                        if (!World[i] || !World[i][j]) Tile = Test.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === 1 })[0];
+                        else Tile = Test.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === World[i][j]["Tile"] })[0];
         
                         message += Tile["Emoji"];
                     }
@@ -309,7 +307,7 @@ const Vanilla: Game = {
             },
 
             NavigateWorld: async (Data: NavigationButtonData, Interactor: User, Move: [number, number]): Promise<InteractionResponse> => {
-                return await Vanilla.Resources.Utilities.BuildNavigation(
+                return await Test.Resources.Utilities.BuildNavigation(
                     {
                         User: Data["User"],
                         Island: Data["Island"],
@@ -320,20 +318,20 @@ const Vanilla: Game = {
             },
 
             DestroyTile: async (Data: NavigationButtonData, Interactor: User, Tool: "Axe" | "Pickaxe"): Promise<["Reply" | "Update", InteractionResponse]> => {
-                const AxeBreakableBlocks = [ 6, 7, 10 ];
-                const PickaxeBreakableBlocks = [ 8, 9 ];
+                const AxeBreakableBlocks = [ 5, 6 ];
+                const PickaxeBreakableBlocks = [ 7, 8 ];
                 const World = await WorldDatabase.Get(Data["User"]);
                 const CurrentTile = World["Islands"][Data["Island"] - 1]["Tiles"][Data["Position"][0]][Data["Position"][1]]["Tile"];
 
                 if ((Tool === "Axe" ? AxeBreakableBlocks : PickaxeBreakableBlocks).includes(CurrentTile as number)) {
-                    const Tile = Vanilla.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === CurrentTile })[0];
+                    const Tile = Test.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === CurrentTile })[0];
 
                     World["Islands"][Data["Island"] - 1]["Tiles"][Data["Position"][0]][Data["Position"][1]] = { Tile: Tile["DestroyReplace"] ?? 2 };
 
-                    Tile["DestroyGive"]?.forEach((Item) => { World["Inventory"] = Vanilla.Resources.Utilities.EditInventory(World["Inventory"], Item["Item"], "Add", Item["Quantity"]); });
+                    Tile["DestroyGive"]?.forEach((Item) => { World["Inventory"] = Test.Resources.Utilities.EditInventory(World["Inventory"], Item["Item"], "Add", Item["Quantity"]); });
 
                     await WorldDatabase.Set(Data["User"], World);
-                    return ["Update", await Vanilla.Resources.Utilities.BuildNavigation(Data, Interactor)];
+                    return ["Update", await Test.Resources.Utilities.BuildNavigation(Data, Interactor)];
                 }
                 else return ["Reply", {
                     content: `${Tool} can't be used on that Tile!`,
@@ -345,7 +343,7 @@ const Vanilla: Game = {
                 const World = await WorldDatabase.Get(Data["User"]);
                         
                 const Tile = World["Islands"][Data["Island"] - 1]["Tiles"][Data["Position"][0]][Data["Position"][1]];
-                const _Tile = Vanilla.Resources.Data.Tiles.filter((_Tile) => { return _Tile["ID"] === Tile["Tile"] })[0];
+                const _Tile = Test.Resources.Data.Tiles.filter((_Tile) => { return _Tile["ID"] === Tile["Tile"] })[0];
         
                 if (!Tile["Component"] || !_Tile["Salary"]) return {
                     content: `You can't Pay Salary to this Tile!`,
@@ -358,11 +356,11 @@ const Vanilla: Game = {
                     ephemeral: true
                 };
         
-                const [NewInventory, Message] = Vanilla.Resources.Utilities.Pay(World["Inventory"], _Tile["Salary"]);
+                const [NewInventory, Message] = Test.Resources.Utilities.Pay(World["Inventory"], _Tile["Salary"]);
                 if (Message !== '') return { content: Message, ephemeral: true }
         
                 Tile["Component"]["Hoarding"].forEach((HoardedStock) => {
-                    World["Inventory"] = Vanilla.Resources.Utilities.EditInventory(
+                    World["Inventory"] = Test.Resources.Utilities.EditInventory(
                         World["Inventory"],
                         HoardedStock["Item"],
                         "Add",
@@ -426,7 +424,7 @@ const Vanilla: Game = {
                     ) + 1;
         
                 return {
-                    content: Vanilla.Resources.Utilities.RenderWorld(
+                    content: Test.Resources.Utilities.RenderWorld(
                         World["Islands"][Island - 1]["Tiles"],
                         World["Islands"][Island - 1]["Outposts"][Outpost - 1]["Location"]
                     ),
@@ -518,9 +516,9 @@ const Vanilla: Game = {
                     ]
                 ];
         
-                const UsableItems = Vanilla.Resources.Data.Items.filter((Item) => { return Item["Usable"]; });
+                const UsableItems = Test.Resources.Data.Items.filter((Item) => { return Item["Usable"]; });
                 return {
-                    content: Vanilla.Resources.Utilities.RenderWorld(
+                    content: Test.Resources.Utilities.RenderWorld(
                         World["Islands"][Data["Island"] - 1]["Tiles"],
                         Data["Position"]
                     ),
@@ -530,7 +528,7 @@ const Vanilla: Game = {
                                 ComponentType: "Button",
                                 CustomID: 'TileInfo',
                                 Label: `[${String(Data["Position"])}]`,
-                                Emoji: (Vanilla.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === World["Islands"][Data["Island"] - 1]["Tiles"][Data["Position"][0]][Data["Position"][1]]["Tile"] })[0] ?? { Emoji: '❓' })["Emoji"],
+                                //Emoji: Vanilla.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === World["Islands"][Data["Island"] - 1]["Tiles"][Data["Position"][0]][Data["Position"][1]]["Tile"] })[0]["Emoji"],
                                 ButtonStyle: "Primary",
                                 Disabled: (Data["Position"][0] < 0 || Data["Position"][0] > (World["Islands"][Data["Island"] - 1]["Tiles"].length - 1)) || (Data["Position"][1] < 0 || Data["Position"][1] > (World["Islands"][Data["Island"] - 1]["Tiles"][0].length - 1)),
                                 Data: Data
@@ -548,7 +546,7 @@ const Vanilla: Game = {
                                 ComponentType: "Button",
                                 CustomID: 'ItemUse',
                                 Label: 'Use Item',
-                                Emoji: UsableItems[Vanilla.Resources.Utilities.RandomNumber(1, UsableItems["length"]) - 1]["Emoji"],
+                                Emoji: UsableItems[Test.Resources.Utilities.RandomNumber(1, UsableItems["length"]) - 1]["Emoji"],
                                 ButtonStyle: "Primary",
                                 Disabled: Data["User"] !== Interactor["id"] || ((Data["Position"][0] < 0 || Data["Position"][0] > (World["Islands"][Data["Island"] - 1]["Tiles"].length - 1))  || (Data["Position"][1] < 0 || Data["Position"][1] > (World["Islands"][Data["Island"] - 1]["Tiles"][0].length - 1))),
                                 Data: Data
@@ -687,23 +685,23 @@ const Vanilla: Game = {
             BuildInventoryEmbed: async (interaction: BaseInteraction, Inventory: World["Inventory"]): Promise<InteractionResponse> => {
                 const Settings = await SettingsDatabase.Get(interaction.user.id);
             
-                return Vanilla.Resources.Utilities.BuildListEmbed<World["Inventory"][0]>(
+                return Test.Resources.Utilities.BuildListEmbed<World["Inventory"][0]>(
                     Inventory,
                     (Item) => {
-                        const item = Vanilla.Resources.Data.Items.filter((item) => { return item["ID"] === Item["Item"] })[0];
+                        const item = Test.Resources.Data.Items.filter((item) => { return item["ID"] === Item["Item"] })[0];
                         return [
-                            `${item["Emoji"]} ${Item["Quantity"] > 1 ? Vanilla.Resources.Utilities.Plural(item["Name"]) : item["Name"]} ×${Item["Quantity"]}`,
+                            `${item["Emoji"]} ${Item["Quantity"] > 1 ? Test.Resources.Utilities.Plural(item["Name"]) : item["Name"]} ×${Item["Quantity"]}`,
                             {
-                                Label: `${Item["Quantity"] > 1 ? Vanilla.Resources.Utilities.Plural(item["Name"]) : item["Name"]}(×${Item["Quantity"]})`,
-                                Value: `${Item["Quantity"] > 1 ? Vanilla.Resources.Utilities.Plural(item["Name"]) : item["Name"]}(×${Item["Quantity"]})`,
+                                Label: `${Item["Quantity"] > 1 ? Test.Resources.Utilities.Plural(item["Name"]) : item["Name"]}(×${Item["Quantity"]})`,
+                                Value: `${Item["Quantity"] > 1 ? Test.Resources.Utilities.Plural(item["Name"]) : item["Name"]}(×${Item["Quantity"]})`,
                                 Description: item["Description"],
                                 Emoji: item["Emoji"]
                             }
                         ];
                     },
                     async (interaction) => {
-                        const Item = Vanilla.Resources.Data.Items.filter((Item) => { return Item["Name"] === Vanilla.Resources.Utilities.Singular(interaction.values[0].split('(')[0]) })[0];
-                        return await interaction.update(await Vanilla.Resources.Utilities.BuildInventoryItemEmbed(interaction.user.id, Item["ID"], parseInt(interaction.values[0].split('(')[1].replace('×', '').replace(')', ''))));
+                        const Item = Test.Resources.Data.Items.filter((Item) => { return Item["Name"] === Test.Resources.Utilities.Singular(interaction.values[0].split('(')[0]) })[0];
+                        return await interaction.update(await Test.Resources.Utilities.BuildInventoryItemEmbed(interaction.user.id, Item["ID"], parseInt(interaction.values[0].split('(')[1].replace('×', '').replace(')', ''))));
                     },
                     {
                         Title: `${Settings["DisplayName"]}'s Inventory`,
@@ -719,17 +717,17 @@ const Vanilla: Game = {
                     return ShopItems.includes(Item)
                 })[0];
         
-                const item = Vanilla.Resources.Data.Items.filter((item) => { return item["ID"] === Item })[0];
+                const item = Test.Resources.Data.Items.filter((item) => { return item["ID"] === Item })[0];
         
                 return {
                     embeds: [
                         {
-                            title: `${item["Emoji"]} ${Quantity > 1 ? Vanilla.Resources.Utilities.Plural(item["Name"]) : item["Name"]} (×${Quantity})`,
+                            title: `${item["Emoji"]} ${Quantity > 1 ? Test.Resources.Utilities.Plural(item["Name"]) : item["Name"]} (×${Quantity})`,
                             description: item["Description"],
                             footer: {
                                 text: stripIndent`
-                                    ${!item["BuyingDetails"] ? 'Can\'t be Bought!' : Vanilla.Resources.Utilities.DisplayItemCost(Item, "Items", "BuyingDetails")}
-                                    ${!item["SellDetails"] ? 'Can\'t be Sold!' : Vanilla.Resources.Utilities.DisplayItemCost(Item, "Items", "SellDetails")}
+                                    ${!item["BuyingDetails"] ? 'Can\'t be Bought!' : Test.Resources.Utilities.DisplayItemCost(Item, "Items", "BuyingDetails")}
+                                    ${!item["SellDetails"] ? 'Can\'t be Sold!' : Test.Resources.Utilities.DisplayItemCost(Item, "Items", "SellDetails")}
                                 `
                             }
                         }
@@ -770,14 +768,14 @@ const Vanilla: Game = {
                 const World = await WorldDatabase.Get(UserID);
         
                 const ShopItem = World["Islands"][Island - 1]["Shop"]["Items"].filter((ShopItem) => { return ShopItem["Item"] === Item })[0];
-                const item = Vanilla.Resources.Data.Items.filter((item) => { return item["ID"] === Item })[0];
+                const item = Test.Resources.Data.Items.filter((item) => { return item["ID"] === Item })[0];
         
                 return {
                     embeds: [
                         {
                             title: `${item["Emoji"]} ${item["Name"]} (${ShopItem["Quantity"]} Available in Island ${Island}'s Shop)`,
                             description: item["Description"],
-                            footer: { text: Vanilla.Resources.Utilities.DisplayItemCost(Item, "Items", "BuyingDetails") }
+                            footer: { text: Test.Resources.Utilities.DisplayItemCost(Item, "Items", "BuyingDetails") }
                         }
                     ],
                     
@@ -808,7 +806,7 @@ const Vanilla: Game = {
             BuildTileInfoEmbed: async (Data: NavigationButtonData, Interactor: User): Promise<InteractionResponse> => {
                 const World = await WorldDatabase.Get(Data["User"]);
                 const Tile = World["Islands"][Data["Island"] - 1]["Tiles"][Data["Position"][0]][Data["Position"][1]];
-                const _Tile = Vanilla.Resources.Data.Tiles.filter((tile) => { return tile["ID"] === Tile["Tile"] })[0];
+                const _Tile = Test.Resources.Data.Tiles.filter((tile) => { return tile["ID"] === Tile["Tile"] })[0];
         
                 return {
                     embeds: [
@@ -822,17 +820,17 @@ const Vanilla: Game = {
         
                                 { name: 'Production', value: _Tile["Production"] ? stripIndent`${
                                     _Tile["Production"]?.map((Production) => {
-                                        const ProductionItem = Vanilla.Resources.Data.Items.filter((Item) => { return Item["ID"] === Production["Item"] })[0];
-                                        const ConsumptionItem = Vanilla.Resources.Data.Items.filter((Item) => { if (Production["Consumption"]) return Item["ID"] === Production["Consumption"]["Item"] })[0];
+                                        const ProductionItem = Test.Resources.Data.Items.filter((Item) => { return Item["ID"] === Production["Item"] })[0];
+                                        const ConsumptionItem = Test.Resources.Data.Items.filter((Item) => { if (Production["Consumption"]) return Item["ID"] === Production["Consumption"]["Item"] })[0];
         
                                         return `${ProductionItem["Emoji"]}×${(Tile["Component"]?.Workers as number) + (Tile["Component"]?.Level as number)} ${Production["Consumption"] ? `(${ConsumptionItem["Emoji"]}-${Production["Consumption"]["Quantity"]})` : ''}`
                                     }).join(',\n')
                                 }/worker/min` : 'No Production' },
         
-                                { name: 'Upgrade Cost', value: String(Vanilla.Resources.Utilities.DisplayItemCost(Tile["Tile"], "Tiles", "Upgrade", true, Tile["Component"]["Level"] + 1)), inline: true },
+                                { name: 'Upgrade Cost', value: String(Test.Resources.Utilities.DisplayItemCost(Tile["Tile"], "Tiles", "Upgrade", true, Tile["Component"]["Level"] + 1)), inline: true },
                                 { name: 'Salary', value: stripIndent`${
                                     _Tile["Salary"]?.map((SalaryItem) => {
-                                        const Item = Vanilla.Resources.Data.Items.filter((Item) => { return Item["ID"] === SalaryItem["Item"] })[0];
+                                        const Item = Test.Resources.Data.Items.filter((Item) => { return Item["ID"] === SalaryItem["Item"] })[0];
                                         return `${Item["Emoji"]}×${SalaryItem["Quantity"]}`
                                     }).join(' ')
                                 }/worker/day`, inline: true }
@@ -864,7 +862,7 @@ const Vanilla: Game = {
             },
 
             BuildSettingsEmbed: async (_Settings: _Settings): Promise<InteractionResponse> => {
-                return Vanilla.Resources.Utilities.BuildListEmbed<Setting>(
+                return Test.Resources.Utilities.BuildListEmbed<Setting>(
                     Settings,
                     (Item) => {
                         return [
@@ -874,7 +872,7 @@ const Vanilla: Game = {
                     },
                     async (interaction) => {
                         const Setting = Settings.filter((Setting) => { return Setting["Name"] === interaction.values[0] })[0]
-                        await interaction.update(Vanilla.Resources.Utilities.BuildSettingEmbed(Setting["Name"], _Settings[Setting["Name"]]));
+                        await interaction.update(Test.Resources.Utilities.BuildSettingEmbed(Setting["Name"], _Settings[Setting["Name"]]));
                     },
                     {
                         Title: `${_Settings["DisplayName"]}'s Settings`,
@@ -938,11 +936,11 @@ const Vanilla: Game = {
                     ephemeral: true
                 };
             
-                return Vanilla.Resources.Utilities.BuildListEmbed<Marketplace["Offers"][0]>(
+                return Test.Resources.Utilities.BuildListEmbed<Marketplace["Offers"][0]>(
                     Marketplace["Offers"],
                     (Item) => {
                         const OfferItemsString = Item["Items"].map((_Item) => {
-                            const item = Vanilla.Resources.Data.Items.filter((item) => { return item["ID"] === _Item["Item"]["Item"] })[0];
+                            const item = Test.Resources.Data.Items.filter((item) => { return item["ID"] === _Item["Item"]["Item"] })[0];
                             return item["Emoji"];
                         }).join(', ');
             
@@ -958,7 +956,7 @@ const Vanilla: Game = {
                         ];
                     },
                     async (interaction) => {
-                        await interaction.update(await Vanilla.Resources.Utilities.BuildMarketplaceUserEmbed(interaction.values[0]));
+                        await interaction.update(await Test.Resources.Utilities.BuildMarketplaceUserEmbed(interaction.values[0]));
                     },
                     { Title: 'Marketplace', Page: 1 }
                 );
@@ -974,11 +972,11 @@ const Vanilla: Game = {
                     ephemeral: true
                 };
         
-                const Reply = Vanilla.Resources.Utilities.BuildListEmbed<typeof UserOffers["Items"][0]>(
+                const Reply = Test.Resources.Utilities.BuildListEmbed<typeof UserOffers["Items"][0]>(
                     UserOffers["Items"],
                     (Item, Index) => {
-                        const OfferItem = Vanilla.Resources.Data.Items.filter((OfferItem) => { return OfferItem["ID"] === Item["Item"]["Item"]; })[0];
-                        const BuyItem = Vanilla.Resources.Data.Items.filter((BuyItem) => { return BuyItem["ID"] === Item["Cost"]["Item"]; })[0];
+                        const OfferItem = Test.Resources.Data.Items.filter((OfferItem) => { return OfferItem["ID"] === Item["Item"]["Item"]; })[0];
+                        const BuyItem = Test.Resources.Data.Items.filter((BuyItem) => { return BuyItem["ID"] === Item["Cost"]["Item"]; })[0];
         
                         return [
                             `${(Index as number) + 1}. ${BuyItem["Emoji"]} ×${Item["Cost"]["Quantity"]} → ${OfferItem["Emoji"]} ×${Item["Item"]["Quantity"]})}**)`,
@@ -989,7 +987,7 @@ const Vanilla: Game = {
                         ];
                     },
                     async (interaction) => {
-                        return await interaction.update(await Vanilla.Resources.Utilities.BuildMarketplaceOfferEmbed(User, interaction.user.id, Number(interaction.values[0])));
+                        return await interaction.update(await Test.Resources.Utilities.BuildMarketplaceOfferEmbed(User, interaction.user.id, Number(interaction.values[0])));
                     },
                     { Title: `${Settings[User]["DisplayName"]}`, Page: 1 }
                 );
@@ -1019,8 +1017,8 @@ const Vanilla: Game = {
         
                 const _Offer = UserOffer["Items"][Offer];
         
-                const OfferItem = Vanilla.Resources.Data.Items.filter((OfferItem) => { return OfferItem["ID"] === _Offer["Item"]["Item"]; })[0];
-                const BuyItem = Vanilla.Resources.Data.Items.filter((BuyItem) => { return BuyItem["ID"] === _Offer["Cost"]["Item"]; })[0];
+                const OfferItem = Test.Resources.Data.Items.filter((OfferItem) => { return OfferItem["ID"] === _Offer["Item"]["Item"]; })[0];
+                const BuyItem = Test.Resources.Data.Items.filter((BuyItem) => { return BuyItem["ID"] === _Offer["Cost"]["Item"]; })[0];
                 return {
                     embeds: [
                         {
@@ -1088,7 +1086,7 @@ const Vanilla: Game = {
             },
 
             BuildModsEmbed: async (): Promise<InteractionResponse> => {
-                return Vanilla.Resources.Utilities.BuildListEmbed<Game>(
+                return Test.Resources.Utilities.BuildListEmbed<Game>(
                     Mods,
                     (Item) => {
                         return [
@@ -1097,7 +1095,7 @@ const Vanilla: Game = {
                         ];
                     },
                     async (interaction) => {
-                        const Reply = await Vanilla.Resources.Utilities.BuildModEmbed(interaction.user.id, interaction.values[0]);
+                        const Reply = await Test.Resources.Utilities.BuildModEmbed(interaction.user.id, interaction.values[0]);
 
                         await interaction.update({
                             embeds: Reply["embeds"] ?? [],
@@ -1144,12 +1142,12 @@ const Vanilla: Game = {
             },
 
             DisplayItemCost: (ID: number, List: "Tiles" | "Items", Detail: "SellDetails" | "BuyingDetails" | "Upgrade", Emoji: boolean = false, UpgradeLevel?: number): string => {
-                const Filtered = (List === "Tiles" ? Vanilla.Resources.Data.Tiles : Vanilla.Resources.Data.Items).filter((_ID) => { return _ID["ID"] === ID })[0];
+                const Filtered = (List === "Tiles" ? Test.Resources.Data.Tiles : Test.Resources.Data.Items).filter((_ID) => { return _ID["ID"] === ID })[0];
         
                 return stripIndent`
                     ${
-                        (List === "Tiles" ? Vanilla.Resources.Utilities.GetUpgradeCost(Filtered["ID"], UpgradeLevel ?? 1) : (Filtered as Item)[Detail === "Upgrade" ? "BuyingDetails" : Detail])?.map((Detail) => {
-                            const DetailItem = Vanilla.Resources.Data.Items.filter((DetailItem) => { return DetailItem["ID"] === Detail["Item"]; })[0];
+                        (List === "Tiles" ? Test.Resources.Utilities.GetUpgradeCost(Filtered["ID"], UpgradeLevel ?? 1) : (Filtered as Item)[Detail === "Upgrade" ? "BuyingDetails" : Detail])?.map((Detail) => {
+                            const DetailItem = Test.Resources.Data.Items.filter((DetailItem) => { return DetailItem["ID"] === Detail["Item"]; })[0];
         
                             return `${Emoji ? DetailItem["Emoji"] : DetailItem["Name"]} ×${Detail["Quantity"]}`
                         }).join(' ')
@@ -1158,7 +1156,7 @@ const Vanilla: Game = {
             },
 
             GetUpgradeCost: (Buildable: number, Level: number): { Item: number, Quantity: number }[] | undefined => {
-                return Vanilla.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === Buildable; })[0]
+                return Test.Resources.Data.Tiles.filter((Tile) => { return Tile["ID"] === Buildable; })[0]
                     .BuyingDetails?.map((Detail) => {
                         return { Item: Detail["Item"], Quantity: Detail["Quantity"] * Math.pow(2, Level - 1) };
                     });
@@ -1169,10 +1167,10 @@ const Vanilla: Game = {
                 let Done = false;
                 let Message: string = '';
                 CostItems.forEach(async (Cost) => {
-                    const Temp = Vanilla.Resources.Utilities.EditInventory(Inventory, Cost["Item"], "Remove", Cost["Quantity"]);
+                    const Temp = Test.Resources.Utilities.EditInventory(Inventory, Cost["Item"], "Remove", Cost["Quantity"]);
         
-                    if (Temp["length"] < 0) {
-                        const Item = Vanilla.Resources.Data.Items.filter((Item) => { return Item["ID"] === Cost["Item"] })[0];
+                    if (Temp["length"] === 0) {
+                        const Item = Test.Resources.Data.Items.filter((Item) => { return Item["ID"] === Cost["Item"] })[0];
         
                         Done = false;
                         Message = `You don't have enough ${Item["Emoji"]} ${Item["Name"]} to Complete this Payment!`!;
@@ -1199,4 +1197,4 @@ const Vanilla: Game = {
     }
 };
 
-export default Vanilla;
+export default Test;

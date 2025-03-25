@@ -2,8 +2,7 @@ import { APIEmbed, time } from "discord.js";
 
 import defineCommand from "../resources/Bot/commands.js";
 
-import { WorldDatabase } from "./world.js";
-import { SettingsDatabase } from "./settings.js";
+import { WorldDatabase, SettingsDatabase } from "./../databases/Databases.js";
 
 import { Item } from "../mods/Game.js";
 
@@ -41,6 +40,17 @@ defineCommand({
 
         const Settings = await SettingsDatabase.Get(interaction.user.id);
 
+        const Shops: [number, number][] = [];
+        World["Islands"][Island - 1]["Tiles"].forEach((Tiles, Index1) => {
+            Tiles.forEach((Tile, Index2) => {
+                if (Tile["Tile"] === 4) Shops.push([Index1, Index2]);
+            });
+        });
+        if (Shops["length"] === 0) return await interaction.reply({
+            content: `Your World doesn't Have a Shop!`,
+            ephemeral: true
+        });
+
         let Message = ``;
         if (((Date.now() - World["Islands"][Island - 1]["Shop"]["LastRestockTime"]) / (1000 * 60 * 60 * 24)) >= 1) {
             let RestockNum = 0;
@@ -70,12 +80,8 @@ defineCommand({
 
         const BuyableItems = GameData.Items.filter((Item) => {
             return World["Islands"][Island - 1]["Shop"]["Items"]
-                .map((Item) => { return Item["Item"] })
+                .map((Item) => { return Item["Item"]; })
                 .includes(Item["ID"]);
-        });
-        if (BuyableItems["length"] === 0) return await interaction.reply({
-            content: `Your World doesn't Have a Shop!`,
-            ephemeral: true
         });
 
         const Reply = 
@@ -86,6 +92,7 @@ defineCommand({
                         `${Item["Emoji"]} ${Item["Name"]}`,
                         {
                             Label: Item["Name"],
+                            Value: Item["Name"],
                             Description: Item["Description"],
                             Emoji: Item["Emoji"]
                         }
@@ -96,7 +103,7 @@ defineCommand({
                         await Utils.BuildShopItemEmbed(
                             interaction.user.id,
                             Island,
-                            GameData.Items.filter((Item) => { return Item["Name"].replaceAll(' ', '_').toLowerCase() === interaction.values[0] })[0]["ID"]
+                            GameData.Items.filter((Item) => { return Item["Name"] === interaction.values[0] })[0]["ID"]
                         )
                     );
                 },

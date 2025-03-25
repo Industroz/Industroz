@@ -3,7 +3,7 @@ import { ButtonInteraction, ModalSubmitInteraction } from "discord.js";
 import { defineModal, defineComponents } from "./../resources/Bot/components.js";
 import defineEvent from "./../resources/Bot/events.js";
 
-import { WorldDatabase } from "../commands/world.js";
+import { WorldDatabase } from "./../databases/Databases.js";
 
 defineEvent({
     Event: "interactionCreate",
@@ -104,6 +104,9 @@ defineEvent({
                 const [NewInventory, ResultMessage] = Utils.Pay(
                     World["Inventory"],
                     (Item["BuyingDetails"]?.map((BuyingDetail) => {
+                        const Item = GameData.Items.filter((Item) => { return Item["ID"] === BuyingDetail["Item"] })[0];
+                        Message += `> ${Item["Emoji"]}${Item["Name"]} -${ Quantity * BuyingDetail["Quantity"]}\n`;
+
                         return { Item: BuyingDetail["Item"], Quantity: Quantity * BuyingDetail["Quantity"] };
                     })) ?? []
                 );
@@ -131,7 +134,7 @@ defineEvent({
                 let Quantity = parseInt(interaction.fields.getTextInputValue('SellNum${}'));
 
                 if (isNaN(Quantity)) return await interaction.reply({
-                    content: `${interaction.fields.getTextInputValue('SellNum${}')} isn't a Valid Integral Quantity!`,
+                    content: `${Quantity} isn't a Valid Integral Quantity!`,
                     ephemeral: true
                 });
 

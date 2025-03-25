@@ -1,7 +1,8 @@
 import { defineComponents } from "../resources/Bot/components.js";
 import defineCommand from "../resources/Bot/commands.js";
 
-import DataBase from "../databases/Database.js";
+import Mods from "./../mods/Mods.js";
+import { WorldDatabase } from "./../databases/Databases.js";
 
 export interface World {
     Islands: {
@@ -33,9 +34,6 @@ export interface World {
     LastOnlineTime: number,
     MaxMarketplaceNum: number
 };
-
-export const WorldDatabase: DataBase<World> = new DataBase("World");
-await WorldDatabase.Init();
 
 defineCommand({
     Name: 'world',
@@ -78,6 +76,15 @@ defineCommand({
                         'Private'
                     ],
                     Required: true
+                },
+                {
+                    Type: "String",
+                    Name: 'mod',
+                    Description: 'Select the Mod for your Industrial World',
+                    Autocomplete: async (interaction) => {
+                        return Mods.map((Mod) => { return { Name: Mod.Configuration.Name, Value: Mod.Configuration.Name } })
+                    },
+                    Required: true
                 }
             ]
         }
@@ -104,7 +111,8 @@ defineCommand({
                                 ButtonStyle: "Primary",
                                 Data: {
                                     WorldExists: WorldDatabase.Get(interaction.user.id) !== undefined,
-                                    Visibility: interaction.options.getString('visibility')
+                                    Visibility: interaction.options.getString('visibility'),
+                                    Mod: interaction.options.getString('mod')
                                 }
                             }
                         )

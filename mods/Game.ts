@@ -48,7 +48,9 @@ export default interface Game {
     Configuration: {
         Name: string,
         Description: string,
-        Version: string    
+        Version: string,
+        Logo: string
+        Author: { Username: string, UserID: string }
     },
     Resources: {
         Data: {
@@ -62,7 +64,6 @@ export default interface Game {
             NavigateWorld: (Data: NavigationButtonData, Interactor: User, Move: [number, number]) => Promise<InteractionResponse>,
             DestroyTile: (Data: NavigationButtonData, Interactor: User, Tool: "Axe" | "Pickaxe") => Promise<["Reply" | "Update", InteractionResponse]>,
             PaySalary: (Data: NavigationButtonData) => Promise<InteractionResponse>,
-            UpgradeBuildable: (Data: NavigationButtonData) => Promise<InteractionResponse>
 
             Plural: (Word: string) => string,
             Singular: (Word: string) => string,
@@ -92,11 +93,15 @@ export default interface Game {
             BuildMarketplaceEmbed: () => Promise<InteractionResponse>,
             BuildMarketplaceUserEmbed: (User: string) => Promise<InteractionResponse>,
             BuildMarketplaceOfferEmbed: (User: string, Interactor: string, Offer: number) => Promise<InteractionResponse>,
+            BuildModEmbed: (User: string, Mod: string) => Promise<InteractionResponse>,
+            BuildModsEmbed: () => Promise<InteractionResponse>,
 
             EditInventory: (InventoryList: World["Inventory"], Item: number, AddorRemove: "Add" | "Remove", Quantity: number) => World["Inventory"],
             DisplayItemCost: (ID: number, List: "Tiles" | "Items", Detail: "SellDetails" | "BuyingDetails" | "Upgrade", Emoji?: boolean, UpgradeLevel?: number) => string,
             GetUpgradeCost: (Buildable: number, Level: number) => { Item: number, Quantity: number }[] | undefined,
             Pay: (Inventory: World["Inventory"], Items: { Item: number, Quantity: number }[]) => [World["Inventory"], string],
+
+            Mod?: { [Util: string]: Function }
         }
     }
 };

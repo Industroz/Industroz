@@ -64,7 +64,7 @@ export default class DataBase<ValueType> {
                         return;
                     }
 
-                    if (Rows[0]) resolve(JSON.parse(Rows[0]["Value"]));
+                    if (Rows[0] !== undefined && Rows[0]["Value"] !== 'undefined') resolve(JSON.parse(Rows[0]["Value"]));
                     else resolve(undefined as ValueType);
                 }
             );
@@ -83,7 +83,7 @@ export default class DataBase<ValueType> {
                 }
 
                 const _Data: { [Key: string]: ValueType } = {};
-                Rows.forEach((KeyValue) => { _Data[KeyValue["Key"].replace('keyv:', '')] = JSON.parse(KeyValue["Value"]); });
+                Rows.forEach((KeyValue) => { _Data[KeyValue["Key"]] = JSON.parse(KeyValue["Value"]); });
                 resolve(_Data);
             });
         });

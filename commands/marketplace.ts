@@ -1,24 +1,19 @@
-import { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent, InteractionReplyOptions, InteractionUpdateOptions, time, User } from "discord.js";
+import { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent } from "discord.js";
 
 import defineCommand from "../resources/Bot/commands.js";
 import { defineComponents } from "../resources/Bot/components.js";
 
-import DataBase from "../databases/Database.js";
-import { SettingsDatabase } from "./settings.js";
+import { MarketplaceDatabase, SettingsDatabase } from "./../databases/Databases.js";
 
 export interface Marketplace {
     Offers: {
         User: string,
         Items: {
             Item: { Item: number, Quantity: number },
-            Cost: { Item: number, Quantity: number },
-            OfferEndTime: number
+            Cost: { Item: number, Quantity: number }
         }[]
     }[]
 };
-
-export const MarketplaceDatabase: DataBase<Marketplace> = new DataBase('Marketplace');
-await MarketplaceDatabase.Init();
 
 defineCommand({
     Name: 'marketplace',
@@ -44,18 +39,6 @@ defineCommand({
         if (interaction.options.getSubcommand(true) === 'view') {
             const User = interaction.options.getUser('user');
 
-            const Marketplace = await MarketplaceDatabase.Get('Global');
-
-            Marketplace["Offers"].forEach((Offer, Index) => {
-                Offer["Items"].forEach((Item, Index) => {
-                    if (Date.now() >= Item["OfferEndTime"]) Offer["Items"].splice(Index, 1);
-                });
-
-                if (Offer["Items"].length === 0) Marketplace["Offers"].splice(Index, 1);
-            });
-
-            await MarketplaceDatabase.Set('Global', Marketplace);
-
             if (User === null) return await interaction.reply(await Utils.BuildMarketplaceEmbed());
             else return await interaction.reply(await Utils.BuildMarketplaceUserEmbed(User.id));
         }
@@ -76,10 +59,9 @@ defineCommand({
                         Emoji: `${BuyItem["Emoji"]} ${BuyItem["Name"]} ×${Item["Cost"]["Quantity"]} → ${OfferItem["Emoji"]} ${OfferItem["Name"]} ×${Item["Item"]["Quantity"]}`,
                         NoEmoji: `${BuyItem["Name"]} ×${Item["Cost"]["Quantity"]} → ${OfferItem["Name"]} ×${Item["Item"]["Quantity"]}`
                     };
-                    const EndsAtString = `(Ends at **${String(time(Math.floor(Item["OfferEndTime"] / 1000), "F"))}**)`;
                     return [
-                        `${(Index as number) + 1}. ${ItemCostString["Emoji"]} ${EndsAtString}`,
-                        { Label: ItemCostString["NoEmoji"], Value: (Index as number).toString(), Description: `Ends at ${new Date(Item["OfferEndTime"]).toUTCString()}`, Emoji: OfferItem["Emoji"] }
+                        `${(Index as number) + 1}. ${ItemCostString["Emoji"]}`,
+                        { Label: ItemCostString["NoEmoji"], Value: (Index as number).toString(), Emoji: OfferItem["Emoji"] }
                     ];
                 },
                 async (interaction) => {
@@ -92,7 +74,6 @@ defineCommand({
                         embeds: [
                             {
                                 title: `Offer ${parseInt(interaction.values[0]) + 1}`,
-                                description: `Ends at **${String(time(Math.floor(UserOffer["OfferEndTime"] / 1000), "F"))}** (Your Timezone)`,
                                 fields: [
                                     { name: 'You Give:', value: `${BuyItem["Emoji"]} ${BuyItem["Name"]} ×${UserOffer["Cost"]["Quantity"]}`, inline: true },
                                     { name: 'Your Receive:', value: `${OfferItem["Emoji"]} ${OfferItem["Name"]} ×${UserOffer["Item"]["Quantity"]}`, inline: true }

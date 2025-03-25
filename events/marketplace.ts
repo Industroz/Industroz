@@ -4,10 +4,9 @@ import { stripIndent } from "common-tags";
 import defineEvent from "./../resources/Bot/events.js";
 import { defineComponents, defineModal } from "./../resources/Bot/components.js";
 
-import { MarketplaceDatabase } from "../commands/marketplace.js";
-import { SettingsDatabase } from "../commands/settings.js";
-import { World, WorldDatabase } from "../commands/world.js";
+import { World } from "../commands/world.js";
 import { Item } from "./../mods/Game.js";
+import { WorldDatabase, MarketplaceDatabase, SettingsDatabase } from "./../databases/Databases.js";
 
 defineEvent(
     {
@@ -73,8 +72,7 @@ defineEvent(
                             Cost: {
                                 Item: Data["Get"][0] as number,
                                 Quantity: Data["Get"][1] as number
-                            },
-                            OfferEndTime: Date.now() + (30 * 1000)
+                            }
                         });
 
                         await MarketplaceDatabase.Set('Global', Marketplace);

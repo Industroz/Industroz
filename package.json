@@ -7,11 +7,12 @@
   "scripts": {
     "build": "npx tsc --project tsconfig.json --watch",
     "start": "nodemon node --trace-warnings .",
+    "database": "node build/databases/Databases.js",
     "test": "nodemon node build/tests/test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Platformer444/Industroz.git"
+    "url": "git+https://github.com/Industroz/Industroz.git"
   },
   "keywords": [
     "Industroz"
@@ -19,9 +20,9 @@
   "author": "Platformer444",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Platformer444/Industroz/issues"
+    "url": "https://github.com/Industroz/Industroz/issues"
   },
-  "homepage": "https://github.com/Platformer444/Industroz#readme",
+  "homepage": "https://github.com/Industroz/Industroz#readme",
   "dependencies": {
     "@keyv/sqlite": "^3.6.6",
     "chalk": "^5.3.0",

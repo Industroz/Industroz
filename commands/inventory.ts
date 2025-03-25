@@ -1,6 +1,6 @@
 import defineCommand from "../resources/Bot/commands.js";
 
-import { WorldDatabase } from "./world.js";
+import { WorldDatabase } from "./../databases/Databases.js";
 
 defineCommand({
     Name: 'inventory',

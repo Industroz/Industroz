@@ -3,7 +3,8 @@ import { ButtonInteraction, StringSelectMenuInteraction, ModalSubmitInteraction 
 import defineEvent from "./../resources/Bot/events.js";
 import { defineModal, defineComponents } from "./../resources/Bot/components.js";
 
-import { Settings, SettingsDatabase, Setting } from "../commands/settings.js";
+import { Settings, Setting } from "../commands/settings.js";
+import { SettingsDatabase } from "./../databases/Databases.js";
 
 defineEvent({
     Event: "interactionCreate",
